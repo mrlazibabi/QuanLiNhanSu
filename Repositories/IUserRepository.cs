@@ -5,6 +5,7 @@ namespace QuanLiNhanSu.Repositories
 {
     public interface IUserRepository
     {
+        public Task<User> AddUserEntityAsync(User user);
         public Task<List<UserModel>>GetAllUserAsync();
         public Task<UserModel> GetUserByIdAsync(string id);
         public Task<string> AddUserAsync(UserModel model);

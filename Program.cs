@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using QuanLiNhanSu.Entities;
 using QuanLiNhanSu.Repositories;
+using QuanLiNhanSu.Repositories.Implements;
+using QuanLiNhanSu.Services;
+using QuanLiNhanSu.Services.Implements;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +28,10 @@ builder.Services.AddAutoMapper(typeof(Program));
 
 // Life Cycle DI : AddSingleton(). AddTransient(), AddScope()
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 
+builder.Services.AddScoped<IUserService, UserService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

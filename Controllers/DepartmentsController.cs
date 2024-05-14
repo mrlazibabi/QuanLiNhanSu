@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using QuanLiNhanSu.Entities;
+using QuanLiNhanSu.Models;
+using QuanLiNhanSu.Services;
 
 namespace QuanLiNhanSu.Controllers
 {
@@ -13,125 +9,74 @@ namespace QuanLiNhanSu.Controllers
     [ApiController]
     public class DepartmentsController : ControllerBase
     {
-        private readonly QuanLiNhansu1Context _context;
-
-        public DepartmentsController(QuanLiNhansu1Context context)
+        private readonly IDepartmentService _depService;
+        public DepartmentsController(IDepartmentService depService)
         {
-            _context = context;
+            _depService = depService;
         }
 
-        // GET: api/Departments
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Department>>> GetDepartments()
+        public async Task<IActionResult> GetAllDeps()
         {
-            if (_context.Departments == null)
+            try
             {
-                return NotFound();
+                var deps = await _depService.GetAllDeps();
+                return Ok(deps);
             }
-            return await _context.Departments.ToListAsync();
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        // GET: api/Departments/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Department>> GetDepartment(string id)
+        public async Task<IActionResult> GetDepById(string id)
         {
-            if (_context.Departments == null)
-            {
-                return NotFound();
-            }
-            var department = await _context.Departments.FindAsync(id);
-
-            if (department == null)
-            {
-                return NotFound();
-            }
-
-            return department;
+            var user = await _depService.GetDepById(id);
+            return user == null ? NotFound() : Ok(user);
         }
 
-        // PUT: api/Departments/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutDepartment(string id, Department department)
+        [HttpPost]
+        public async Task<IActionResult> AddNewUser(DepartmentModel model)
         {
-            if (id != department.Id)
+            try
+            {
+                var userReturn = await _depService.AddDep(model);
+                return Ok(userReturn);
+            }
+            catch
+            {
+                return BadRequest("Adding Error");
+            }
+        }
+
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> UpdateUser(string id, UserModel model)
+        //{
+        //    if (id == model.Id)
+        //    {
+        //        await _depService.UpdateUser(id, model);
+        //        return Ok();
+        //    }
+        //    else
+        //    {
+        //        return BadRequest("Not Found");
+        //    }
+        //}
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            if (id == null)
             {
                 return BadRequest();
             }
-
-            _context.Entry(department).State = EntityState.Modified;
-
-            try
+            else
             {
-                await _context.SaveChangesAsync();
+                await _depService.DeleteDep(id);
+                return Ok();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DepartmentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Departments
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Department>> PostDepartment(Department department)
-        {
-            if (_context.Departments == null)
-            {
-                return Problem("Entity set 'QuanLiNhansu1Context.Departments'  is null.");
-            }
-            _context.Departments.Add(department);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (DepartmentExists(department.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetDepartment", new { id = department.Id }, department);
-        }
-
-        // DELETE: api/Departments/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDepartment(string id)
-        {
-            if (_context.Departments == null)
-            {
-                return NotFound();
-            }
-            var department = await _context.Departments.FindAsync(id);
-            if (department == null)
-            {
-                return NotFound();
-            }
-
-            _context.Departments.Remove(department);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool DepartmentExists(string id)
-        {
-            return (_context.Departments?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
+

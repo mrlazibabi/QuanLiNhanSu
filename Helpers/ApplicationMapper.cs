@@ -9,6 +9,7 @@ namespace QuanLiNhanSu.Helpers
         public ApplicationMapper()
         {
             CreateMap<UserModel, User>().ReverseMap();
+            CreateMap<DepartmentModel, Department>().ReverseMap();
         }
     }
 }
