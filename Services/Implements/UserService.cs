@@ -47,7 +47,7 @@ public class UserService : IUserService
         try
         {
             var userEntity = _mapper!.Map<User>(userModel);
-            userEntity.Dep = (await _depRepo!.GetDepById(userModel.DepId)).Result;
+            userEntity.Dep = _depRepo!.GetById(userModel.DepId).Result;
             userEntity.Role = _roleRepo.GetById(userModel.RoleId).Result;
             await _userRepo.AddUserEntityAsync(userEntity);
             return _mapper!.Map<UserModel>(userEntity);

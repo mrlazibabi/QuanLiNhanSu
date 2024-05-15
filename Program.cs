@@ -27,11 +27,13 @@ builder.Services.AddCors(p => p.AddPolicy("MyCors", build =>
 builder.Services.AddAutoMapper(typeof(Program));
 
 // Life Cycle DI : AddSingleton(). AddTransient(), AddScope()
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

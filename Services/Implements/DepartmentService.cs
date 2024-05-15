@@ -32,7 +32,7 @@ namespace QuanLiNhanSu.Services.Implements
         // GET BY ID Service
         public async Task<DepartmentModel> GetDepById(string id)
         {
-            var dep = await _context.Users!.FindAsync(id);
+            var dep = await _context.Departments!.FindAsync(id);
             return _mapper.Map<DepartmentModel>(dep);
 
         }
